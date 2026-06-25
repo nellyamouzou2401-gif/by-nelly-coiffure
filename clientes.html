@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mes clientes</title>
+</head>
+<body>
+
+<h2>👩 Mes clientes</h2>
+
+<input id="nom" placeholder="Nom et prénom">
+<input id="tel" placeholder="Téléphone">
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<button onclick="ajouter()">➕ Ajouter</button>
+
+<div id="liste"></div>
+
+<script>
+let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+
+function afficher() {
+  let html = "";
+
+  clientes.forEach((c, i) => {
+    html += `
+      <div style="background:white;padding:15px;margin-top:15px;border-radius:20px;box-shadow:0 3px 10px rgba(0,0,0,0.1);">
+        <h3>${c.nom}</h3>
+        <p>📞 ${c.tel}</p>
+        <p>📝 ${c.notes}</p>
+
+        <button onclick="modifier(${i})">✏️ Modifier</button>
+        <button onclick="supprimer(${i})">🗑️ Supprimer</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("liste").innerHTML = html;
+}
+
+function ajouter() {
+  const nom = document.getElementById("nom").value;
+  const tel = document.getElementById("tel").value;
+  const notes = document.getElementById("notes").value;
+
+  if (nom === "") return;
+
+  clientes.push({ nom, tel, notes });
+
+  sauvegarder();
+
+  document.getElementById("nom").value = "";
+  document.getElementById("tel").value = "";
+  document.getElementById("notes").value = "";
+}
+
+function supprimer(i) {
+  if (confirm("Supprimer cette cliente ?")) {
+    clientes.splice(i, 1);
+    sauvegarder();
+  }
+}
+
+function modifier(i) {
+  const c = clientes[i];
+
+  document.getElementById("nom").value = c.nom;
+  document.getElementById("tel").value = c.tel;
+  document.getElementById("notes").value = c.notes;
+
+  clientes.splice(i, 1);
+  sauvegarder();
+}
+
+function sauvegarder() {
+  localStorage.setItem("clientes", JSON.stringify(clientes));
+  afficher();
+}
+
+afficher();
+</script>
+
+</body>
+</html>
